@@ -1,19 +1,22 @@
 package org.openapitools.server
 
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.*
-
-import org.openapitools.server.apis.PetApi
-import org.openapitools.server.apis.PetApiServiceImpl
-import org.openapitools.server.apis.StoreApi
-import org.openapitools.server.apis.StoreApiServiceImpl
-import org.openapitools.server.apis.UserApi
-import org.openapitools.server.apis.UserApiServiceImpl
+import io.javalin.apibuilder.ApiBuilder.delete
+import io.javalin.apibuilder.ApiBuilder.get
+import io.javalin.apibuilder.ApiBuilder.path
+import io.javalin.apibuilder.ApiBuilder.post
+import io.javalin.apibuilder.ApiBuilder.put
+import org.openapitools.api.PetApiDelegate
+import org.openapitools.api.StoreApiDelegate
+import org.openapitools.api.UserApiDelegate
+import org.openapitools.server.apis.PetApiController
+import org.openapitools.server.apis.StoreApiController
+import org.openapitools.server.apis.UserApiController
 
 fun main() {
-    val petApi = PetApi(PetApiServiceImpl())
-    val storeApi = StoreApi(StoreApiServiceImpl())
-    val userApi = UserApi(UserApiServiceImpl())
+    val petApi = PetApi(object : PetApiDelegate {})
+    val storeApi = StoreApi(object : StoreApiDelegate {})
+    val userApi = UserApi(object : UserApiDelegate {})
 
     val app = Javalin
         .create { config ->
