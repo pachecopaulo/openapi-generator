@@ -6,6 +6,8 @@ on:
       - 'samples/server/petstore/kotlin-springboot-3*/**'
       - 'samples/server/petstore/kotlin-server/javalin/**'
       - 'samples/server/petstore/kotlin-server/javalin-6/**'
+      - 'samples/server/petstore/kotlin-server/javalin-6-delegate/**'
+      - 'samples/server/petstore/kotlin-server/javalin-delegate/**'
       # comment out due to gradle build failure
       # - samples/server/petstore/kotlin-spring-default/**
   pull_request:
@@ -13,6 +15,8 @@ on:
       - 'samples/server/petstore/kotlin-springboot-3*/**'
       - 'samples/server/petstore/kotlin-server/javalin/**'
       - 'samples/server/petstore/kotlin-server/javalin-6/**'
+      - 'samples/server/petstore/kotlin-server/javalin-delegate/**'
+      - 'samples/server/petstore/kotlin-server/javalin-6-delegate/**'
       # comment out due to gradle build failure
       # - samples/server/petstore/kotlin-spring-default/**
 
@@ -33,6 +37,8 @@ jobs:
           - samples/server/petstore/kotlin-springboot-request-cookie
           - samples/server/petstore/kotlin-server/javalin
           - samples/server/petstore/kotlin-server/javalin-6
+          - samples/server/petstore/kotlin-server/javalin-delegate
+          - samples/server/petstore/kotlin-server/javalin-6-delegate
           # comment out due to gradle build failure
           # - samples/server/petstore/kotlin-spring-default/
     steps:

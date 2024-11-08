@@ -20,9 +20,7 @@ interface PetApiDelegate {
     /**
      * @see PetApi#deletePet
      */
-    fun deletePet(ctx: Context,
-                  petId: kotlin.Long,
-                  apiKey: kotlin.String?) {
+    fun deletePet(ctx: Context, petId: kotlin.Long, apiKey: kotlin.String?) {
         ctx.status(HttpStatus.NOT_IMPLEMENTED)
     }
 
@@ -62,10 +60,7 @@ interface PetApiDelegate {
     /**
      * @see PetApi#updatePetWithForm
      */
-    fun updatePetWithForm(ctx: Context,
-                          petId: kotlin.Long,
-                          name: kotlin.String?,
-                          status: kotlin.String?) {
+    fun updatePetWithForm(ctx: Context, petId: kotlin.Long, name: kotlin.String?, status: kotlin.String?) {
         ctx.status(HttpStatus.NOT_IMPLEMENTED)
     }
 
@@ -73,10 +68,7 @@ interface PetApiDelegate {
     /**
      * @see PetApi#uploadFile
      */
-    fun uploadFile(ctx: Context,
-                   petId: kotlin.Long,
-                   additionalMetadata: kotlin.String?,
-                   file: io.javalin.http.UploadedFile?) {
+    fun uploadFile(ctx: Context, petId: kotlin.Long, additionalMetadata: kotlin.String?, file: io.javalin.http.UploadedFile?) {
         ctx.status(HttpStatus.NOT_IMPLEMENTED)
     }
 

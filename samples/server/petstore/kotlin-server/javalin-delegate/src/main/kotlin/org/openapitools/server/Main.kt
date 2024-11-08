@@ -1,48 +1,45 @@
 package org.openapitools.server
 
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.delete
-import io.javalin.apibuilder.ApiBuilder.get
-import io.javalin.apibuilder.ApiBuilder.path
-import io.javalin.apibuilder.ApiBuilder.post
-import io.javalin.apibuilder.ApiBuilder.put
-import org.openapitools.api.PetApiDelegate
-import org.openapitools.api.StoreApiDelegate
-import org.openapitools.api.UserApiDelegate
-import org.openapitools.server.apis.PetApiController
-import org.openapitools.server.apis.StoreApiController
-import org.openapitools.server.apis.UserApiController
+import io.javalin.community.routing.dsl.routing
+
+import org.openapitools.server.apis.PetApi
+import org.openapitools.server.apis.PetApiServiceImpl
+import org.openapitools.server.apis.StoreApi
+import org.openapitools.server.apis.StoreApiServiceImpl
+import org.openapitools.server.apis.UserApi
+import org.openapitools.server.apis.UserApiServiceImpl
 
 fun main() {
-    val petApi = PetApiController(object : PetApiDelegate {})
-    val storeApi = StoreApiController(object : StoreApiDelegate {})
-    val userApi = UserApiController(object : UserApiDelegate{})
+    val PetApi = PetApi(PetApiServiceImpl())
+    val StoreApi = StoreApi(StoreApiServiceImpl())
+    val UserApi = UserApi(UserApiServiceImpl())
 
     val app = Javalin
         .create { config ->
-            config.router.apiBuilder {
-                path("/pet") { post(petApi::addPet) }
-                path("/pet/{petId}") { delete(petApi::deletePet) }
-                path("/pet/findByStatus") { get(petApi::findPetsByStatus) }
-                path("/pet/findByTags") { get(petApi::findPetsByTags) }
-                path("/pet/{petId}") { get(petApi::getPetById) }
-                path("/pet") { put(petApi::updatePet) }
-                path("/pet/{petId}") { post(petApi::updatePetWithForm) }
-                path("/pet/{petId}/uploadImage") { post(petApi::uploadFile) }
+            config.routing {
+                post("/pet", PetApi::addPet)
+                delete("/pet/{petId}", PetApi::deletePet)
+                get("/pet/findByStatus", PetApi::findPetsByStatus)
+                get("/pet/findByTags", PetApi::findPetsByTags)
+                get("/pet/{petId}", PetApi::getPetById)
+                put("/pet", PetApi::updatePet)
+                post("/pet/{petId}", PetApi::updatePetWithForm)
+                post("/pet/{petId}/uploadImage", PetApi::uploadFile)
 
-                path("/store/order/{orderId}") { delete(storeApi::deleteOrder) }
-                path("/store/inventory") { get(storeApi::getInventory) }
-                path("/store/order/{orderId}") { get(storeApi::getOrderById) }
-                path("/store/order") { post(storeApi::placeOrder) }
+                delete("/store/order/{orderId}", StoreApi::deleteOrder)
+                get("/store/inventory", StoreApi::getInventory)
+                get("/store/order/{orderId}", StoreApi::getOrderById)
+                post("/store/order", StoreApi::placeOrder)
 
-                path("/user") { post(userApi::createUser) }
-                path("/user/createWithArray") { post(userApi::createUsersWithArrayInput) }
-                path("/user/createWithList") { post(userApi::createUsersWithListInput) }
-                path("/user/{username}") { delete(userApi::deleteUser) }
-                path("/user/{username}") { get(userApi::getUserByName) }
-                path("/user/login") { get(userApi::loginUser) }
-                path("/user/logout") { get(userApi::logoutUser) }
-                path("/user/{username}") { put(userApi::updateUser) }
+                post("/user", UserApi::createUser)
+                post("/user/createWithArray", UserApi::createUsersWithArrayInput)
+                post("/user/createWithList", UserApi::createUsersWithListInput)
+                delete("/user/{username}", UserApi::deleteUser)
+                get("/user/{username}", UserApi::getUserByName)
+                get("/user/login", UserApi::loginUser)
+                get("/user/logout", UserApi::logoutUser)
+                put("/user/{username}", UserApi::updateUser)
 
             }
         }

@@ -5,6 +5,7 @@ import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.TestUtils;
 import org.openapitools.codegen.languages.KotlinServerCodegen;
 import org.openapitools.codegen.languages.KotlinSpringServerCodegen;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -15,10 +16,10 @@ import java.nio.file.Paths;
 
 import static org.openapitools.codegen.CodegenConstants.LIBRARY;
 import static org.openapitools.codegen.languages.AbstractKotlinCodegen.USE_JAKARTA_EE;
-import static org.openapitools.codegen.languages.KotlinServerCodegen.Constants.INTERFACE_ONLY;
-import static org.openapitools.codegen.languages.KotlinServerCodegen.Constants.JAXRS_SPEC;
 import static org.openapitools.codegen.TestUtils.assertFileContains;
 import static org.openapitools.codegen.TestUtils.assertFileNotContains;
+import static org.openapitools.codegen.languages.KotlinServerCodegen.Constants.*;
+import static org.openapitools.codegen.languages.KotlinServerCodegen.Constants.DELEGATE_PATTERN;
 import static org.openapitools.codegen.languages.features.BeanValidationFeatures.USE_BEANVALIDATION;
 
 public class KotlinServerCodegenTest {
@@ -251,5 +252,20 @@ public class KotlinServerCodegenTest {
                 order,
                 "@get:Size(max=50)"
         );
+    }
+
+    @Test
+    public void testJavalinDelegatePattern() {
+        final KotlinServerCodegen codegen = new KotlinServerCodegen();
+        codegen.additionalProperties().put(LIBRARY, JAVALIN6);
+        codegen.additionalProperties().put(DELEGATE_PATTERN, true);
+        codegen.processOpts();
+
+        Assert.assertEquals(codegen.additionalProperties().get(KotlinSpringServerCodegen.DELEGATE_PATTERN), true);
+        Assert.assertEquals(codegen.additionalProperties().get("isDelegate"), "true");
+
+        Assert.assertEquals(codegen.apiTemplateFiles().get("apiController.mustache"), "Controller.kt");
+        Assert.assertEquals(codegen.apiTemplateFiles().get("apiDelegate.mustache"), "Delegate.kt");
+        Assert.assertEquals(codegen.apiTemplateFiles().get("api.mustache"), ".kt");
     }
 }

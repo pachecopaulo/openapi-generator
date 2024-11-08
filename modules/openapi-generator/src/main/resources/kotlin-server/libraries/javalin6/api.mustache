@@ -9,29 +9,29 @@ import io.javalin.http.queryParamAsClass
 {{/imports}}
 
 {{#operations}}
+{{^isDelegate}}
+class {{classname}}(private val service: {{classname}}Service) {
+{{/isDelegate}}
+{{#isDelegate}}
+interface {{classname}} {
+    fun getDelegate(): {{classname}}Delegate = object: {{classname}}Delegate {}
+{{/isDelegate}}
+{{#operation}}
+    /**{{#summary}}
+    * {{.}}{{/summary}}
+    * {{unescapedNotes}}
+    {{#allParams}}* @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+    {{/allParams}}*/
+    fun {{operationId}}(ctx: Context) {
     {{^isDelegate}}
-        class {{classname}}(private val service: {{classname}}Service) {
+        val result = service.{{operationId}}({{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}ctx)
+        ctx.status({{#responses}}{{#-first}}{{code}}{{/-first}}{{/responses}}).json(result)
     {{/isDelegate}}
     {{#isDelegate}}
-        interface {{classname}} {
-        fun getDelegate(): {{classname}}Delegate = object: {{classname}}Delegate {}
+        return getDelegate().{{operationId}}(ctx: Context, {{#allParams}}{{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}{{#reactive}}{{#hasParams}}, {{/hasParams}}exchange{{/reactive}});
     {{/isDelegate}}
-    {{#operation}}
-        /**{{#summary}}
-            * {{.}}{{/summary}}
-        * {{unescapedNotes}}
-        {{#allParams}}* @param {{paramName}} {{description}} {{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
-        {{/allParams}}*/
-        fun {{operationId}}(ctx: Context) {
-        {{^isDelegate}}
-            val result = service.{{operationId}}({{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}ctx)
-            ctx.status({{#responses}}{{#-first}}{{code}}{{/-first}}{{/responses}}).json(result)
-        {{/isDelegate}}
-        {{#isDelegate}}
-            return getDelegate().{{operationId}}(ctx: Context, {{#allParams}}{{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}{{#reactive}}{{#hasParams}}, {{/hasParams}}exchange{{/reactive}});
-        {{/isDelegate}}
-        }
-
-    {{/operation}}
     }
+
+{{/operation}}
+}
 {{/operations}}
