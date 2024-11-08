@@ -55,6 +55,7 @@ public class KotlinServerCodegen extends AbstractKotlinCodegen implements BeanVa
     @Getter @Setter
     private Boolean metricsFeatureEnabled = true;
     private boolean interfaceOnly = false;
+    private boolean delegatePattern = false;
     private boolean useBeanValidation = false;
     private boolean useCoroutines = false;
     private boolean useMutiny = false;
@@ -126,6 +127,12 @@ public class KotlinServerCodegen extends AbstractKotlinCodegen implements BeanVa
         apiPackage = packageName + ".apis";
         modelPackage = packageName + ".models";
 
+        if (isJavalin() && this.delegatePattern) {
+            apiTemplateFiles.put("apiController.mustache", "Controller.kt");
+            apiTemplateFiles.put("apiDelegate.mustache", "Delegate.kt");
+            additionalProperties.put("isDelegate", "true");
+        }
+
         supportedLibraries.put(Constants.KTOR, "ktor framework");
         supportedLibraries.put(Constants.JAXRS_SPEC, "JAX-RS spec only");
         supportedLibraries.put(Constants.JAVALIN5, "Javalin 5");
@@ -141,6 +148,7 @@ public class KotlinServerCodegen extends AbstractKotlinCodegen implements BeanVa
         addSwitch(Constants.RESOURCES, Constants.RESOURCES_DESC, getResourcesFeatureEnabled());
         addSwitch(Constants.METRICS, Constants.METRICS_DESC, getMetricsFeatureEnabled());
         addSwitch(Constants.INTERFACE_ONLY, Constants.INTERFACE_ONLY_DESC, interfaceOnly);
+        addSwitch(Constants.DELEGATE_PATTERN, Constants.DELEGATE_PATTERN_DESC, delegatePattern);
         addSwitch(USE_BEANVALIDATION, Constants.USE_BEANVALIDATION_DESC, useBeanValidation);
         addSwitch(Constants.USE_COROUTINES, Constants.USE_COROUTINES_DESC, useCoroutines);
         addSwitch(Constants.USE_MUTINY, Constants.USE_MUTINY_DESC, useMutiny);
@@ -184,6 +192,13 @@ public class KotlinServerCodegen extends AbstractKotlinCodegen implements BeanVa
             interfaceOnly = Boolean.parseBoolean(additionalProperties.get(Constants.INTERFACE_ONLY).toString());
             if (!interfaceOnly) {
                 additionalProperties.remove(Constants.INTERFACE_ONLY);
+            }
+        }
+
+        if (additionalProperties.containsKey(Constants.DELEGATE_PATTERN)) {
+            delegatePattern = Boolean.parseBoolean(additionalProperties.get(Constants.DELEGATE_PATTERN).toString());
+            if (!delegatePattern) {
+                additionalProperties.remove(Constants.DELEGATE_PATTERN);
             }
         }
 
@@ -343,6 +358,8 @@ public class KotlinServerCodegen extends AbstractKotlinCodegen implements BeanVa
         public final static String METRICS_DESC = "Enables metrics feature.";
         public static final String INTERFACE_ONLY = "interfaceOnly";
         public static final String INTERFACE_ONLY_DESC = "Whether to generate only API interface stubs without the server files. This option is currently supported only when using jaxrs-spec library.";
+        public static final String DELEGATE_PATTERN = "delegatePattern";
+        public static final String DELEGATE_PATTERN_DESC = "Whether to generate the server files using the delegate pattern. This option is currently supported only when using javalin library";
         public static final String USE_BEANVALIDATION_DESC = "Use BeanValidation API annotations. This option is currently supported only when using jaxrs-spec library.";
         public static final String USE_COROUTINES = "useCoroutines";
         public static final String USE_COROUTINES_DESC = "Whether to use the Coroutines. This option is currently supported only when using jaxrs-spec library.";

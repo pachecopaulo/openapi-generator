@@ -1,0 +1,28 @@
+package {{package}}
+
+{{#imports}}import {{import}}
+{{/imports}}
+import io.javalin.http.Context
+import io.javalin.http.HttpStatus
+import io.javalin.http.MediaType
+import java.util.Optional
+{{#async}}
+    import java.util.concurrent.CompletableFuture
+{{/async}}
+
+{{#operations}}
+    /**
+    * A delegate to be called by the {{classname}} controller in Javalin.
+    */
+    interface {{classname}}Delegate {
+    {{#operation}}
+            /**
+            * @see {{classname}}#{{operationId}}
+            */
+            fun {{operationId}}(ctx: Context, {{#allParams}}, {{paramName}}: {{^isFile}}{{^isBodyParam}}{{>optionalDataType}}{{/isBodyParam}}{{#isBodyParam}}{{{dataType}}}{{/isBodyParam}}{{/isFile}}{{#isFile}}Resource?{{/isFile}}{{/allParams}}) {
+                ctx.status(HttpStatus.NOT_IMPLEMENTED)
+            }
+
+    {{/operation}}
+        }
+{{/operations}}

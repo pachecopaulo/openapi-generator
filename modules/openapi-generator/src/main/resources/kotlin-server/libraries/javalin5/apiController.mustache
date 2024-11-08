@@ -1,0 +1,24 @@
+package {{apiPackage}}
+
+import io.javalin.http.Context
+import io.javalin.http.bodyAsClass
+import io.javalin.http.pathParamAsClass
+import io.javalin.http.queryParamAsClass
+
+{{#imports}}import {{import}}
+{{/imports}}
+
+{{#operations}}
+    class {{classname}}(delegate: {{classname}}Delegate) {
+    {{#operation}}
+        private val delegate: {{classname}}Delegate
+
+        init {
+            this.delegate = Optional.ofNullable(delegate).orElse(object : {{classname}}Delegate {})
+        }
+
+        override fun getDelegate(): {{classname}}Delegate = delegate
+
+    {{/operation}}
+    }
+{{/operations}}
